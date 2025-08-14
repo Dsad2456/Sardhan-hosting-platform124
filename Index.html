@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sardhan Hosting Platform</title>
+<style>
+    body {
+        font-family: 'Segoe UI', sans-serif;
+        background-color: #121212;
+        color: white;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        margin: 0;
+    }
+    h1 {
+        color: #00ff99;
+        margin-bottom: 20px;
+    }
+    .upload-box {
+        background: #1e1e1e;
+        padding: 20px;
+        border-radius: 15px;
+        box-shadow: 0px 4px 20px rgba(0,0,0,0.5);
+        text-align: center;
+        width: 350px;
+    }
+    input[type="file"] {
+        display: none;
+    }
+    label {
+        background: #00ff99;
+        color: black;
+        padding: 10px 20px;
+        border-radius: 8px;
+        cursor: pointer;
+        display: inline-block;
+        margin-bottom: 10px;
+    }
+    .progress-container {
+        background: #333;
+        height: 20px;
+        width: 100%;
+        border-radius: 10px;
+        overflow: hidden;
+        margin-top: 10px;
+    }
+    .progress-bar {
+        height: 100%;
+        width: 0%;
+        background: linear-gradient(90deg, #00ff99, #00ccff);
+        transition: width 0.3s ease;
+    }
+    .link {
+        margin-top: 15px;
+        word-break: break-all;
+    }
+</style>
+</head>
+<body>
+    <h1>🚀 Sardhan Hosting Platform</h1>
+    <div class="upload-box">
+        <form id="uploadForm">
+            <input type="file" id="file" name="file">
+            <label for="file">📂 Choose File</label>
+            <button type="submit" style="background:#00ccff; color:white; padding:10px 20px; border:none; border-radius:8px; cursor:pointer;">Upload</button>
+        </form>
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        <div class="link" id="fileLink"></div>
+    </div>
+
+<script>
+document.getElementById("uploadForm").addEventListener("submit", function(e) {
+    e.preventDefault();
+    let file = document.getElementById("file").files[0];
+    if (!file) {
+        alert("Please select a file first!");
+        return;
+    }
+
+    let formData = new FormData();
+    formData.append("file", file);
+
+    let xhr = new XMLHttpRequest();
+    xhr.open("POST", "/upload", true);
+
+    // Update progress bar
+    xhr.upload.onprogress = function(e) {
+        if (e.lengthComputable) {
+            let percent = (e.loaded / e.total) * 100;
+            document.getElementById("progressBar").style.width = percent + "%";
+        }
+    };
+
+    xhr.onload = function() {
+        if (xhr.status === 200) {
+            let res = JSON.parse(xhr.responseText);
+            document.getElementById("fileLink").innerHTML = `<a href="${res.url}" target="_blank">${res.url}</a>`;
+        } else {
+            alert("Upload failed!");
+        }
+    };
+
+    xhr.send(formData);
+});
+</script>
+</body>
+</html>
